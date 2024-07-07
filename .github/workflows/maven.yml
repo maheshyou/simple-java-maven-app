@@ -1,3 +1,4 @@
+
 name: Java CI with Maven
 
 on:
@@ -7,7 +8,7 @@ on:
     branches: [ "master" ]
   workflow_dispatch:
 jobs:
-  buildandDeploy:
+  build and Deploy:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -22,11 +23,13 @@ jobs:
     - name: Connect to Lab machine for tomcat 9
       uses: cross-the-world/ssh-scp-ssh-pipelines@latest
       with:
-       host: 'mittalsonal04gmsl0045.simplilearnlabs.com'
+       host: 'mittalsonal04gmsl0045.simplilearnlabs.com/'
        user: 'mittalsonal04gm'
        pass: 'al04gm0A@ad34w'
        port: 42006
        connect_timeout: 10s
+       first_ssh: |
+          sudo chmod 777 /var/lib/tomcat9/webapps
        scp: |
          './target/*.jar' => /var/lib/tomcat9/webapps
        last_ssh: |
