@@ -28,7 +28,7 @@ jobs:
        port: 42006
        connect_timeout: 10s
        scp: |
-         './target/*.war' => /var/lib/tomcat9/webapps
+         './target/*.jar' => /var/lib/tomcat9/webapps
        last_ssh: |
           ls -al 
           sudo systemctl restart tomcat9 
