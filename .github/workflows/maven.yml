@@ -31,7 +31,7 @@ jobs:
        first_ssh: |
           sudo chmod 777 /var/lib/tomcat9/webapps
        scp: |
-         './target/*.war' => /var/lib/tomcat9/webapps
+         './target/*.jar' => /var/lib/tomcat9/webapps
        last_ssh: |
           ls -al 
           sudo systemctl restart tomcat9 
