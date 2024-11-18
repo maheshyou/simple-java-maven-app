@@ -1,30 +1,46 @@
 pipeline {
     agent any
+    environment {
+        DOCKER_IMAGE = 'maheshyou/simple-java-maven-app:latest'
+    }
+    tools {
+        maven 'mymaven' // Ensure Maven is configured in Jenkins
+    }
     stages {
-        stage('Build') {
-            when{
-                branch 'master'
-            }
+        stage('Clone Repository') {
             steps {
-                sh 'mvn package'
+                git branch: 'master', url: 'https://github.com/maheshyou/simple-java-maven-app.git'
             }
         }
-        stage('Test') {
-          when{
-            branch 'test'
-          }
+        stage('Build') {
             steps {
-                sh 'mvn test'
+                sh 'mvn clean package'
             }
-            post {
-                always {
-                    junit 'target/surefire-reports/*.xml'
+        }
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    docker.build("$DOCKER_IMAGE")
                 }
             }
         }
-        stage('Deliver') {
+        stage('Push Docker Image') {
             steps {
-                sh 'echo "Deploy code"'
+                script {
+                    docker.withRegistry('https://index.docker.io/v1/', 'maheshyou') {
+                        docker.image("$DOCKER_IMAGE").push()
+                    }
+                }
+            }
+        }
+        stage('Deploy to Kubernetes') {
+            steps {
+                script {
+                    sh '''
+                    kubectl apply -f k8s/deployment.yaml
+                    kubectl apply -f k8s/service.yaml
+                    '''
+                }
             }
         }
     }
